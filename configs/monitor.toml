@@ -6,19 +6,16 @@ notified_url = "http://localhost:8750/event"
 chain_id = 5
 name = "goerli"
 http_url = "https://rpc.goerli.dev"
-private_key = "0x0000000000000000000000000000000000000000000000000000000000000000"
 
 [[endpoints]]
 chain_id = 80001
 name = "mumbai"
 http_url = "https://polygontestapi.terminet.io/rpc"
-private_key = "0x0000000000000000000000000000000000000000000000000000000000000000"
 
 [[endpoints]]
 chain_id = 420
 name = "optimism"
 http_url = " https://goerli.optimism.io"
-private_key = "0x0000000000000000000000000000000000000000000000000000000000000000"
 
 [[sources]]
 named = "broadcaster"

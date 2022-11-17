@@ -20,6 +20,5 @@ epoch_duration = 200
 [network_config]
 port = 38700
 boot_nodes = ["/ip4/20.3.233.7/tcp/38700/p2p/12D3KooWEZopB8nMuMGFT24LrkGzxCEkwUpY4w5mgY78biy8ZiU5"]
-peer_key = "0x683740824cb70c50393d3fd7fe42e57df444ca93b62051f291d0ee3c71d88148"
 share_peer_interval = 30
 only_global_ips = true
