@@ -1,0 +1,13 @@
+version = 1
+port = 8730
+executors = 2
+db_url = "http://127.0.0.1:8710"
+msg_pool_url = "http://127.0.0.1:8720"
+db_token = ""
+cert_path = "../servers/test-ca/ca.cert"
+round_time_limit = 60
+clear_msg_interval = 180
+time_check_interval = 30
+retry_interval = 10
+retry_times = 2
+max_conn = 250
