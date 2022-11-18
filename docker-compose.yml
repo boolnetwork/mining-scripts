@@ -59,7 +59,7 @@ services:
     # ports:
     #     - "8740:8740"
     environment:
-        RUST_LOG: warn,info=bnk_monitor
+        RUST_LOG: warn,bnk_monitor=info
     volumes:
         - ./configs/monitor.toml:/bnk/monitor.toml
         - ./data/:/bnk/data
