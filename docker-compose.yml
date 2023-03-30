@@ -11,6 +11,7 @@ services:
     volumes:
       - ./node-data:/data"
     command: |
+      --dev
       --unsafe-rpc-external
       --unsafe-ws-external
       --rpc-cors all
@@ -52,26 +53,3 @@ services:
         - /dev/sgx/provision
     depends_on:
         - bnk-watcher
-
-  bnk-monitor:
-    image: boolnetwork/bnk-monitor:latest
-    network_mode: "host"
-    # ports:
-    #     - "8740:8740"
-    environment:
-        RUST_LOG: warn,bnk_monitor=info
-    volumes:
-        - ./configs/monitor.toml:/bnk/monitor.toml
-        - ./data/:/bnk/data
-
-  bnk-relayer:
-    image: boolnetwork/bnk-relayer:latest
-    network_mode: "host"
-    # ports:
-    #     - "8750:8750"
-    environment:
-        RUST_LOG: debug
-    command: |
-      -w=http://127.0.0.1:8720
-      -m=http://127.0.0.1:8740
-      -p=8750
