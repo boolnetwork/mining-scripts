@@ -1,7 +1,7 @@
 version: "3"
 services:
   bnk-node:
-    image: boolnetwork/bnk-node:latest
+    image: boolnetwork/bnk-node:pre-release
     ports:
       - "9933:9933"
       - "9944:9944"
