@@ -1,7 +1,5 @@
-port = 8740
+port = 18740
 database_url = "/bnk/data/sqlite.db"
-notified_url = "http://localhost:8750/event"
-
 
 [default_watcher]
 enabled = true

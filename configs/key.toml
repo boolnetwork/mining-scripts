@@ -1,9 +1,9 @@
 version = 1
 attestation_style = 1
-port = 8730
+port = 18730
 executors = 2
-db_url = "http://127.0.0.1:8710"
-msg_pool_url = "http://127.0.0.1:8720"
+db_url = "http://127.0.0.1:18710"
+msg_pool_url = "http://127.0.0.1:18720"
 db_token = ""
 cert_path = "../servers/test-ca/ca.cert"
 round_time_limit = 60
