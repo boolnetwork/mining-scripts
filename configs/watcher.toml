@@ -1,15 +1,15 @@
 # local msg_pool server port.
 msg_pool_port = 18720
 # local node url for watcher
-node_ws_url = "ws://10.0.0.5:9945"
+node_ws_url = "ws://138.91.116.52:9945"
 # local database url for data storage.
-db_url = "http://10.0.0.5:18710"
+db_url = "http://localhost:18710"
 # local database token for database usage.
 db_token = ""
 # local sgx key server url
-key_server_url = "https://10.0.0.5:18730"
+key_server_url = "https://localhost:18730"
 # used to generate LocalKeyStore, used to get AccountId in substrate.
-identity = "0x0000000000000000000000000000000000000000000000000000000000000000"
+identity = "0x5fb92d6e98884f76de468fa3f6278f8807c48bebc13595d45af5bdc4da702133"
 # seconds per block
 block_time = 3
 # blocks per epoch

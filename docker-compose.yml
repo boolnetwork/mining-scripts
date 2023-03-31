@@ -32,6 +32,7 @@ services:
         RUST_LOG: info
     volumes:
         - ./configs/key.toml:/bnk/key.toml
+        - ./configs/sgx_default_qcnl.conf:/etc/sgx_default_qcnl.conf
     devices:
         - /dev/sgx/enclave
         - /dev/sgx/provision
