@@ -50,3 +50,10 @@ docker-compose up -d
 ```
 
 More details about the config. [tee](https://boolnetwork.github.io/docs/developer/tee)
+
+
+```
+docker run -e RUST_LOG=info,tee=trace -itd -v `pwd`/node-data:/data -p 9934:9933 -p 9945:9944 --name bnk-node-test boolnetwork/bnk-node --dev --unsafe-ws-external --unsafe-rpc-external --rpc-cors all
+```
+
+
