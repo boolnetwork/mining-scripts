@@ -1,5 +1,20 @@
 version: "3"
 services:
+  bnk-node:
+    image: boolnetwork/bnk-node:latest
+    ports:
+      - "9933:9933"
+      - "9944:9944"
+      - "30333:30333"
+    environment:
+      RUST_LOG: info
+    volumes:
+      - ./node-data:/data"
+    command: |
+      --unsafe-rpc-external
+      --unsafe-ws-external
+      --rpc-cors all
+
   bnk-database:
     image: boolnetwork/bnk-database:latest
     network_mode: "host"
