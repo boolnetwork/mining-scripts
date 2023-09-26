@@ -4,11 +4,14 @@ services:
     image: boolnetwork/bnk-occlum-keyring-epid:v0.5.2
     network_mode: "host"
     # ports:
-    #     - "8730:8730"
+    #     - "8720:8720"
+    #     - "38700:38700"
     environment:
         RUST_LOG: info
     volumes:
-        - ./configs/watcher.toml:/bnk/watcher.toml
+        - ./configs:/configs
+        - ./data:/root/occlum_instance/data
     devices:
         - /dev/sgx/enclave
         - /dev/sgx/provision
+    command: bash -c 'cp /configs/watcher.toml /root/occlum_instance; source /root/.bashrc; cd /root/occlum_instance; occlum print mrsigner; occlum print mrenclave; occlum run /bin/bnk-watcher /host/watcher.toml'
