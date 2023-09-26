@@ -1,22 +1,27 @@
-# local msg_pool server port.
-msg_pool_port = 18720
-# local node url for watcher
-node_ws_url = "ws://10.0.0.5:9945"
-# local database url for data storage.
-db_url = "http://10.0.0.5:18710"
-# local database token for database usage.
-db_token = ""
-# local sgx key server url
-key_server_url = "https://10.0.0.5:18730"
+node_ws_url = "ws://test-rpc-node-ws.bool.network:80"
+# local node_call server port.
+node_call_port = 8720
 # used to generate LocalKeyStore, used to get AccountId in substrate.
 identity = "0x0000000000000000000000000000000000000000000000000000000000000000"
-# seconds per block
-block_time = 3
-# blocks per epoch
-epoch_duration = 200
+# database path
+db_path = "/bnk/data"
+# tokio console port
+console_port = 5555
+# database start option
+[db_option]
+create_if_missing = true
+atomic_flush = true
 
 [network_config]
-port = 48700
-boot_nodes = []
+port = 38700
+boot_nodes = ["/ip4/40.117.78.134/tcp/38700/p2p/12D3KooWRCdgTk5C6d4txvmfJbGKR2SFpiF5HgbpCVEEUUQGWR1c"]
 share_peer_interval = 30
 only_global_ips = true
+
+[key_server_config]
+version = 7
+attestation_style = 1
+seal_policy = "MRSIGNER"
+exe_policy = { Multiply = { executors = 8 } }
+round_time_limit = 60
+clear_msg_interval = 180

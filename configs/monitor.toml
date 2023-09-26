@@ -1,8 +1,0 @@
-port = 18740
-database_url = "/bnk/data/sqlite.db"
-
-[default_watcher]
-enabled = true
-polling_interval = 30000
-max_step = 2000
-begin_height = 0

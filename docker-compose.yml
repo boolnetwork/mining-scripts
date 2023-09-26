@@ -1,39 +1,14 @@
 version: "3"
 services:
-  bnk-database:
-    image: boolnetwork/bnk-database:latest
-    network_mode: "host"
-    # ports:
-    #   - "8710:8710"
-    environment:
-      RUST_LOG: info
-    volumes:
-      - ./configs/db.toml:/bnk/db.toml
-      - ./data:/bnk/data
-
-  bnk-watcher:
-    image: boolnetwork/bnk-watcher:latest
-    network_mode: "host"
-    # ports:
-    #     - "8720:8720"
-    environment:
-        RUST_LOG: info
-    volumes:
-        - ./configs/watcher.toml:/bnk/watcher.toml
-    depends_on:
-        - bnk-database
-
-  bnk-sgx-key-server:
-    image: boolnetwork/bnk-sgx-key-server:latest
+  bnk-occlum-keyring:
+    image: boolnetwork/bnk-occlum-keyring-epid:v0.5.2
     network_mode: "host"
     # ports:
     #     - "8730:8730"
     environment:
         RUST_LOG: info
     volumes:
-        - ./configs/key.toml:/bnk/key.toml
+        - ./configs/watcher.toml:/bnk/watcher.toml
     devices:
         - /dev/sgx/enclave
         - /dev/sgx/provision
-    depends_on:
-        - bnk-watcher
