@@ -1,4 +1,17 @@
-[TOC]
+- [BOOLNetwork Guidance](#boolnetwork-guidance)
+  - [Instructions](#instructions)
+  - [SGX](#sgx)
+  - [Running the Service](#running-the-service)
+    - [Preparing an Account](#preparing-an-account)
+      - [Option 1](#option-1)
+      - [Option 2](#option-2)
+    - [Configuration Modification](#configuration-modification)
+    - [Startup and Maintenance](#startup-and-maintenance)
+      - [Creating Provider](#creating-provider)
+      - [Binding PID](#binding-pid)
+      - [Joining the Service](#joining-the-service)
+      - [Exiting the Service (if required)](#exiting-the-service-if-required)
+  - [FAQ](#faq)
 
 # BOOLNetwork Guidance
 
@@ -56,7 +69,7 @@ sudo reboot
 
 ## Running the Service
 
-Once you have ensured that your service supports SGX1, you can proceed to run the keyring service. A keyring service requires obtaining events and state from a node service. In the configuration file, an official node is recommended as the data source. You can also start a local full node and use it as a data source once data synchronization is complete.
+Once you have ensured that your machine supports SGX1, you can proceed to run the keyring service. A keyring service requires obtaining events and state from a node service. In the configuration file, an official node is recommended as the data source. You can also start a local full node and use it as a data source once data synchronization is complete.
 
 ### Preparing an Account
 
@@ -81,7 +94,7 @@ Account ID:       0x34a5572cb21d34354e3091564d5edc7b791e9d5f
 
 An alternative approach is to create an account using MetaMask since BOOLNetwork's account system is Ethereum-compatible.
 
-We recommend using MetaMask here because subsequent operations will require interaction with the boolscan browser, which currently exclusively supports MetaMask.
+We recommend using MetaMask here because subsequent operations will require interaction with the [boolscan browser](https://test.boolscan.com/), which currently exclusively supports MetaMask.
 
 To claim test coins, use the command:
 
@@ -208,7 +221,7 @@ Upon linking your `Identity` account to [Boolscan's device](https://test.boolsca
 
 ![boolscan-unlisted](./images/boolscan-unlisted.jpg)
 
-Please note that all subsequent actions will require Metamask signature.
+**All subsequent actions will require Metamask signature. Please verify that the connected account in Metamask matches the `identity` account in your `keyring.toml` file to ensure consistency.**
 
 #### Creating Provider
 
