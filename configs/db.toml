@@ -1,8 +1,0 @@
-port = 18710
-num_workers = 20
-db_path = "/bnk/data"
-token = ""
-
-[options]
-create_if_missing = true
-atomic_flush = true

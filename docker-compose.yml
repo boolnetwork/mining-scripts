@@ -1,49 +1,18 @@
 version: "3"
 services:
-  bnk-node:
-    image: boolnetwork/bnk-node:latest
-    ports:
-      - "9933:9933"
-      - "9944:9944"
-      - "30333:30333"
-    environment:
-      RUST_LOG: info
-    volumes:
-      - ./node-data:/data"
-    command: |
-      --unsafe-rpc-external
-      --unsafe-ws-external
-      --rpc-cors all
-
-  bnk-database:
-    image: boolnetwork/bnk-database:latest
+  bnk-occlum-keyring:
+    image: boolnetwork/bnk-occlum-keyring-epid:v0.5.2
+    restart: always
     network_mode: "host"
-    environment:
-      RUST_LOG: info
-    volumes:
-      - ./configs/db.toml:/bnk/db.toml
-      - ./data:/bnk/data
-
-  bnk-watcher:
-    image: boolnetwork/bnk-watcher:latest
-    network_mode: "host"
+    # ports:
+    #     - "8720:8720"
+    #     - "38700:38700"
     environment:
         RUST_LOG: info
     volumes:
-        - ./configs/watcher.toml:/bnk/watcher.toml
-    depends_on:
-        - bnk-database
-
-  bnk-sgx-key-server:
-    image: boolnetwork/bnk-sgx-key-server:latest
-    network_mode: "host"
-    environment:
-        RUST_LOG: info
-    volumes:
-        - ./configs/key.toml:/bnk/key.toml
-        - ./configs/sgx_default_qcnl.conf:/etc/sgx_default_qcnl.conf
+        - ./configs:/configs
+        - ./data:/root/occlum_instance/data
     devices:
         - /dev/sgx/enclave
         - /dev/sgx/provision
-    depends_on:
-        - bnk-watcher
+    command: bash -c 'cp /configs/keyring.toml /root/occlum_instance; source /root/.bashrc; cd /root/occlum_instance; occlum print mrsigner; occlum print mrenclave; occlum run /bin/bnk-watcher /host/keyring.toml'

@@ -1,0 +1,27 @@
+node_ws_url = "ws://test-rpc-node-ws.bool.network:80"
+# local node_call server port.
+node_call_port = 8720
+# used to generate LocalKeyStore, used to get AccountId in substrate.
+identity = "0x0000000000000000000000000000000000000000000000000000000000000000"
+# database path
+db_path = "/host/data"
+# tokio console port
+console_port = 5555
+# database start option
+[db_option]
+create_if_missing = true
+atomic_flush = true
+
+[network_config]
+port = 38700
+boot_nodes = ["/ip4/40.117.78.134/tcp/38700/p2p/12D3KooWRCdgTk5C6d4txvmfJbGKR2SFpiF5HgbpCVEEUUQGWR1c"]
+share_peer_interval = 30
+only_global_ips = true
+
+[key_server_config]
+version = 7
+attestation_style = 1
+seal_policy = "MRSIGNER"
+exe_policy = { Multiply = { executors = 8 } }
+round_time_limit = 60
+clear_msg_interval = 180
