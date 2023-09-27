@@ -2,6 +2,7 @@ version: "3"
 services:
   bnk-occlum-keyring:
     image: boolnetwork/bnk-occlum-keyring-epid:v0.5.2
+    restart: always
     network_mode: "host"
     # ports:
     #     - "8720:8720"
@@ -14,4 +15,4 @@ services:
     devices:
         - /dev/sgx/enclave
         - /dev/sgx/provision
-    command: bash -c 'cp /configs/watcher.toml /root/occlum_instance; source /root/.bashrc; cd /root/occlum_instance; occlum print mrsigner; occlum print mrenclave; occlum run /bin/bnk-watcher /host/watcher.toml'
+    command: bash -c 'cp /configs/keyring.toml /root/occlum_instance; source /root/.bashrc; cd /root/occlum_instance; occlum print mrsigner; occlum print mrenclave; occlum run /bin/bnk-watcher /host/keyring.toml'
