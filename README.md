@@ -260,6 +260,8 @@ send enter err cid-epoch-fork: 307-6968-1
 
 Note: The system penalizes malicious nodes by deducting their staked tokens. To avoid financial losses due to irregular exits, please follow the process below to exit.
 
+![boolscan-exit-server](./images/boolscan-exit-server.jpg)
+
 Exit the service by executing `Exit Service` and `Stop Work` in sequence:
 
 1. After executing `Exit Service`, you need to wait for a epoch before you can execute `Stop Work`. You can't perform any operations during this period.
