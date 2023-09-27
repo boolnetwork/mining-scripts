@@ -1,10 +1,12 @@
-# BOOLNetwork scripts
+[TOC]
+
+# BOOLNetwork Guidance
 
 ## Instructions
 
-Before Getting Started, Check at [Intel© Ark](https://ark.intel.com/content/www/us/en/ark.html#@Processors) that your processor is [Intel© SGX](https://www.intel.com/content/www/us/en/developer/tools/software-guard-extensions/overview.html) compatible.
+Prior to commencing, please verify on [Intel© Ark](https://ark.intel.com/content/www/us/en/ark.html#@Processors) whether your processor is compatible with [Intel© SGX](https://www.intel.com/content/www/us/en/developer/tools/software-guard-extensions/overview.html).
 
-Clone the repo.
+Begin by cloning the repository.
 
 ```bash
 git clone https://github.com/boolnetwork/mining-scripts.git
@@ -12,12 +14,14 @@ git clone https://github.com/boolnetwork/mining-scripts.git
 
 ## SGX
 
-Check if SGX1 is Supported.
-```
+Inspect your system's SGX support with:
+
+```shell
 ./sgx-detect
 ```
 
-Output example:
+Sample Output:
+
 ```text
 ✔  SGX instruction set
   ✔  CPU support
@@ -41,19 +45,229 @@ Output example:
     ✔  Production mode (Intel whitelisted)
 ```
 
-## BOOLNetwork & Docker
+Installation of SGX Environment (Required)
+Initiate SGX program execution and restart with:
 
-Run with docker-compose
-
-```bash
-docker-compose up -d
+```shell
+sudo chmod +x sgx_enable
+sudo ./sgx_enable
+sudo reboot
 ```
 
-More details about the config. [tee](https://boolnetwork.github.io/docs/developer/tee)
+## Running the Service
 
+Once you have ensured that your service supports SGX1, you can proceed to run the keyring service. A keyring service requires obtaining events and state from a node service. In the configuration file, an official node is recommended as the data source. You can also start a local full node and use it as a data source once data synchronization is complete.
 
+### Preparing an Account
+
+Before running, you need to create an account to act as the owner for holding and managing the current keyring service.
+
+#### Option 1
+
+Generate an account using the command `docker run -it --rm boolnetwork/bnk-node:latest identity generate`.
+
+You will receive an output like this:
+
+```text
+Secret seed:      0x71235e1458ce9d140c8b8ded28ccc1e32e62c340aef51a65e1350a387dbe08a6
+Public key (hex): 0x0248e7f02dcc9f7061a090b67dede93d7381847e94955aee7996603d2225e9f77e
+Account ID:       0x34a5572cb21d34354e3091564d5edc7b791e9d5f
 ```
-docker run -e RUST_LOG=info,tee=trace -itd -v `pwd`/node-data:/data -p 9934:9933 -p 9945:9944 --name bnk-node-test boolnetwork/bnk-node --dev --unsafe-ws-external --unsafe-rpc-external --rpc-cors all
+
+`Secret seed` signifies the account's private key, which can be directly imported into wallets such as MetaMask.
+`Account ID` represents the account's address.
+
+#### Option 2
+
+An alternative approach is to create an account using MetaMask since BOOLNetwork's account system is Ethereum-compatible.
+
+We recommend using MetaMask here because subsequent operations will require interaction with the boolscan browser, which currently exclusively supports MetaMask.
+
+To claim test coins, use the command:
+
+```shell
+curl https://bot.bool.network/coin/tBol/47/<Account ID/Address>
 ```
 
+Example:
+
+```shell
+curl https://bot.bool.network/coin/tBol/47/0x34a5572cb21d34354e3091564d5edc7b791e9d5f
+```
+
+### Configuration Modification
+
+For most users, simply replace the `identity` in the default configuration file with the `Secret seed` created in the previous step. There is no need to modify other parameters.
+
+For example：
+Open the `keyring.toml` file under the `configs` directory and replace `0x0000000000000000000000000000000000000000000000000000000000000000`with your `<Secret seed>`。
+
+The default configuration file, which includes identity information, service ports, P2P network, service launch types, etc., is as follows：
+
+```toml
+node_ws_url = "ws://test-rpc-node-ws.bool.network:80"
+# local node_call server port.
+node_call_port = 8720
+# used to generate LocalKeyStore, used to get AccountId in substrate.
+identity = "0x0000000000000000000000000000000000000000000000000000000000000000"
+# database path
+db_path = "/host/data"
+# tokio console port
+console_port = 5555
+
+# database start option
+[db_option]
+create_if_missing = true
+atomic_flush = true
+
+[network_config]
+port = 38700
+boot_nodes = ["/ip4/40.117.78.134/tcp/38700/p2p/12D3KooWRCdgTk5C6d4txvmfJbGKR2SFpiF5HgbpCVEEUUQGWR1c"]
+share_peer_interval = 30
+only_global_ips = true
+
+[key_server_config]
+version = 7
+attestation_style = 1
+seal_policy = "MRSIGNER"
+exe_policy = { Multiply = { executors = 8 } }
+round_time_limit = 60
+clear_msg_interval = 180
+```
+
+Parameter Descriptions:
+- **`node_ws_url`**: The accessible endpoint of the node service. If using a local port, it might be `ws://127.0.0.1:9944`.
+
+- **`node_call_port`**: The port number through which the keyring service is exposed to the outside world.
+
+- **`identity`**: The holder of the keyring service, a crucial factor affecting income and penalties for providing services.
+
+- **`db_path`**: The storage path for the keyring service to persist data. It is not recommended to modify this. If you need to change it, please refer to the [occlum file system](https://occlum.readthedocs.io/en/latest/filesystem/fs_overview.html).
+
+- **`db_option.create_if_missing`**: Runtime parameters for the RocksDB database exposed by the keyring service.
+
+- **`db_option.atomic_flush`**: Runtime parameters for the RocksDB database exposed by the keyring service.
+
+- **`network_config.port`**: The local port number for the keyring service's P2P.
+
+- **`network_config.boot_nodes`**: Information for the keyring service's P2P module to connect to other services. If configured incorrectly, it will become an isolated node and cannot participate in the service.
+
+- **`network_config.share_peer_interval`**: The interval at which the keyring service's P2P module outputs the number of node connections.
+
+- **`network_config.only_global_ips`**: Whether the keyring service's P2P module only manages public IP addresses.
+
+- **`network_config.peer_key`**: Specifies the keyring service's P2P identity information. If not filled, it will be generated randomly.
+
+- **`key_server_config.version`**: The version number required for keyring service registration. This version number is jointly maintained by BOOLNetwork official and the community. It increases as the keyring software's functionality is upgraded or changed. Users should not change it arbitrarily, as it may cause the software to malfunction. The specific software version number and registration version can be found in official information.
+
+- **`key_server_config.attestation_style`**: The mode of SGX remote attestation for the keyring service, where `1` represents `EPID` and `2` represents `DCAP`.
+
+- **`key_server_config.seal_policy`**: The data encryption method for the keyring service, supporting `MRSIGNER` and `MRENCLAVE`. It has the same meaning as [Intel SGX sealing](https://www.intel.com/content/www/us/en/developer/articles/technical/introduction-to-intel-sgx-sealing.html). `MRSIGNER` trusts the software publisher, and the advantage is that it is compatible with historical data after software upgrades. `MRENCLAVE` only trusts the code, and the disadvantage is that it cannot read historical data after software upgrades.
+
+- **`key_server_config.exe_policy`**: Optional execution engine that affects software execution efficiency. Generally, it does not need to be changed.
+
+- **`key_server_config.round_time_limit`**: The waiting time in seconds for data interaction between keyring services. The session ends if it exceeds the waiting time.
+
+- **`key_server_config.clear_msg_interval`**: The interval in seconds for the keyring service to clear abnormal data.
+
+
+We employ Docker Compose for service management. If you need to specify a storage directory, you can modify the disk mapping in the `docker-compose.yaml` file to `./data`. By default, the data for the keyring service is stored in the same directory as the `docker-compose.yaml` file.
+
+
+```text
+volumes:
+    - ./configs:/configs
+    - ./data:/root/occlum_instance/data
+```
+
+Note: `/root/occlum_instance/data`  is an internal directory within Occlum and does not require modification.
+
+### Startup and Maintenance
+
+Before starting, we should check if `docker compose` is installed on the system. You can check this by running `docker compose --version ` or `docker-compose --version`. If it's not installed, you'll need to install it.
+
+To start and view logs, use the following commands:
+
+```shell
+docker compose up -d
+docker compose logs -f 
+```
+
+Wait for the software to start. If there are any errors, refer to the [FAQ](#FAQ)。
+
+If the software is running normally, you will see logs similar to the following in the terminal:
+
+```text
+register sgx: "0x13bec2ac21b038d885d49d8100d307ce7761cf890bbdf25962a0eb2f2ac18101"
+```
+
+In the [Apps Management Tool](https://apps.bool.network/?rpc=wss%3A%2F%2Ftest-rpc-node-ws.bool.network#/explorer) you can observe:
+![apps-device-register](./images/apps-device-register.jpg)
+
+Upon linking your `Identity` account to [Boolscan's device](https://test.boolscan.com/dashboard/device), unlisted devices will initially appear in the device list:
+
+![boolscan-unlisted](./images/boolscan-unlisted.jpg)
+
+Please note that all subsequent actions will require Metamask signature.
+
+#### Creating Provider
+
+On the [Boolscan's provider](https://test.boolscan.com/dashboard/provider) to create a provider instance for staking an amount not less than 1 tBol.
+
+![boolscan-create-provider](./images/boolscan-create-provider.jpg)
+
+Tip: A provider can be associated with multiple devices, but each device can only be bound to one PID.
+
+#### Binding PID
+
+After creating the provider, return to the [Boolscan's device](https://test.boolscan.com/dashboard/device) to bind the unlisted devices to the provider for device activation.
+
+![boolscan-bind-pid](./images/boolscan-bind-pid.jpg)
+
+#### Joining the Service 
+
+Once the binding is complete, wait for the service to synchronize data, and the device will change to a `Stop` state.
+
+Subsequently, you can execute the `Stark Work` and `Join Service` commands one by one to involve the device in the service.
+
+![boolscan-join-server](images/boolscan-join-server.jpg)
+
+When you see the device status change to `Service`, **congratulations** - the process is complete.
+
+Check if the software is running correctly, indicated by the following logs:
+
+```text
+HeartBeat session: 40167, challenge: [124, 148, 169, 145, 235, 214, 178, 134, 90, 10, 228, 25, 131, 65, 254, 0, 98, 93, 83, 204, 48, 182, 48, 209, 19, 158, 45, 233, 49, 254, 25, 129], hash: "0xa746ff7daae0952967cc9eadb38e6627052cd073cf0a319cb8fcb65e0abdabef"
+
+send enter err cid-epoch-fork: 303-8096-0
+send enter err cid-epoch-fork: 307-6968-1
+```
+
+#### Exiting the Service (if required)
+
+Note: The system penalizes malicious nodes by deducting their staked tokens. To avoid financial losses due to irregular exits, please follow the process below to exit.
+
+Exit the service by executing `Exit Service` and `Stop Work` in sequence:
+
+1. After executing `Exit Service`, you need to wait for a epoch before you can execute `Stop Work`. You can't perform any operations during this period.
+   
+2. After executing `Stop Work`, the device's status will be `Stop`. Only then can you stop the keyring service; otherwise, there may be penalties.
+
+Finally, stop your keyring service.
+
+```shell
+docker compose down
+```
+
+## FAQ
+
+<span id="FAQ"> </span>
+
+* If you encounter an error during startup with the message： thread 'main' panicked at 'called `Result::unwrap()` on an `Err` value: "Invalid secret key"'
+
+it means that the `identity` field in `keyring.toml` has an incorrect input format. Please ensure that you have entered the correct account private key.
+
+* If there is no device registration information on Boolscan or you receive the error message： register failed for "Rpc error: RPC error: RPC call failed: ErrorObject { code: ServerError(1010), message: \"Invalid Transaction\", data: Some(RawValue(\"Inability to pay some fees (e.g. account balance too low)\")) }
+
+it indicates that the account under `identity` does not have a sufficient balance. To address this, use the command `curl https://bot.bool.network/coin/tBol/47/<Account ID/Address>`to claim test coins.
 
