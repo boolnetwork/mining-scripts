@@ -1,4 +1,4 @@
-node_ws_url = "ws://test-rpc-node-ws.bool.network:80"
+node_ws_url = "ws://172.210.130.200:9944"
 # local node_call server port.
 node_call_port = 8720
 # used to generate LocalKeyStore, used to get AccountId in substrate.
@@ -14,12 +14,12 @@ atomic_flush = true
 
 [network_config]
 port = 38700
-boot_nodes = ["/ip4/40.117.78.134/tcp/38700/p2p/12D3KooWRCdgTk5C6d4txvmfJbGKR2SFpiF5HgbpCVEEUUQGWR1c"]
+boot_nodes = ["/ip4/172.210.130.200/tcp/38700/p2p/12D3KooWJVjkr19spLuvmWb68zdxki2qucnubPzbHRjxRi8jhwzF"]
 share_peer_interval = 30
 only_global_ips = true
 
 [key_server_config]
-version = 7
+version = 1
 attestation_style = 1
 seal_policy = "MRSIGNER"
 exe_policy = { Multiply = { executors = 8 } }

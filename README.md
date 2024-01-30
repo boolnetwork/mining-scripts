@@ -17,9 +17,9 @@
 
 ## Instructions
 
-Prior to commencing, please verify on [Intel© Ark](https://ark.intel.com/content/www/us/en/ark.html#@Processors) whether your processor is compatible with [Intel© SGX](https://www.intel.com/content/www/us/en/developer/tools/software-guard-extensions/overview.html).
+Before starting, please cofirm on [Intel© Ark](https://ark.intel.com/content/www/us/en/ark.html#@Processors) whether your processor is compatible with [Intel© SGX](https://www.intel.com/content/www/us/en/developer/tools/software-guard-extensions/overview.html).
 
-Begin by cloning the repository.
+Start by cloning the repository.
 
 ```bash
 git clone https://github.com/boolnetwork/mining-scripts.git
@@ -69,15 +69,15 @@ sudo reboot
 
 ## Running the Service
 
-Once you have ensured that your machine supports SGX1, you can proceed to run the keyring service. A keyring service requires obtaining events and state from a node service. In the configuration file, an official node is recommended as the data source. You can also start a local full node and use it as a data source once data synchronization is complete.
+After confirming that your machine supports SGX1/SGX2, you can proceed to launch the keyring service. The keyring service relies on obtaining events and state from a node service. In the configuration file, it is advisable to use an official node as the data source. Alternatively, you can initiate a local full node and utilize it as a data source once data synchronization is finished.
 
 ### Preparing an Account
 
-Before running, you need to create an account to act as the owner for holding and managing the current keyring service.
+Before initiating the process, you must create an account to serve as the owner responsible for holding and managing the current keyring service.
 
 #### Option 1
 
-Generate an account using the command `docker run -it --rm boolnetwork/bnk-node:latest identity generate`.
+Generate an account using the command `docker run -it --rm boolnetwork/bnk-node:release identity generate`.
 
 You will receive an output like this:
 
@@ -92,33 +92,33 @@ Account ID:       0x34a5572cb21d34354e3091564d5edc7b791e9d5f
 
 #### Option 2
 
-An alternative approach is to create an account using MetaMask since BOOLNetwork's account system is Ethereum-compatible.
+An alternative approach is to create an account using MetaMask since BoolNetwork's account system is Ethereum-compatible.
 
-We recommend using MetaMask here because subsequent operations will require interaction with the [boolscan browser](https://test.boolscan.com/), which currently exclusively supports MetaMask.
+We recommend using MetaMask here because subsequent operations will require interaction with the [boolscan browser](https://dashboard.boolscan.com/?network=devnet), which currently exclusively supports MetaMask.
 
 To claim test coins, use the command:
 
 ```shell
-curl https://bot.bool.network/coin/tBol/47/<Account ID/Address>
+curl https://dev-bot.bool.network/coin/tBol/47/<Account ID/Address>
 ```
 
 Example:
 
 ```shell
-curl https://bot.bool.network/coin/tBol/47/0x34a5572cb21d34354e3091564d5edc7b791e9d5f
+curl https://dev-bot.bool.network/coin/tBol/47/0x34a5572cb21d34354e3091564d5edc7b791e9d5f
 ```
 
 ### Configuration Modification
 
-For most users, simply replace the `identity` in the default configuration file with the `Secret seed` created in the previous step. There is no need to modify other parameters.
+For the majority of users, just substitute the `identity` in the default configuration file with the `Secret seed` created in the previous step. There is no need to modify other parameters.
 
 For example：
 Open the `keyring.toml` file under the `configs` directory and replace `0x0000000000000000000000000000000000000000000000000000000000000000`with your `<Secret seed>`。
 
-The default configuration file, which includes identity information, service ports, P2P network, service launch types, etc., is as follows：
+The default configuration file, encompassing identity information, service ports, P2P network, service launch types, etc., is as follows：
 
 ```toml
-node_ws_url = "ws://test-rpc-node-ws.bool.network:80"
+node_ws_url = "ws://172.210.130.200:9944"
 # local node_call server port.
 node_call_port = 8720
 # used to generate LocalKeyStore, used to get AccountId in substrate.
@@ -135,12 +135,12 @@ atomic_flush = true
 
 [network_config]
 port = 38700
-boot_nodes = ["/ip4/40.117.78.134/tcp/38700/p2p/12D3KooWRCdgTk5C6d4txvmfJbGKR2SFpiF5HgbpCVEEUUQGWR1c"]
+boot_nodes = ["/ip4/172.210.130.200/tcp/38700/p2p/12D3KooWJVjkr19spLuvmWb68zdxki2qucnubPzbHRjxRi8jhwzF"]
 share_peer_interval = 30
 only_global_ips = true
 
 [key_server_config]
-version = 7
+version = 1
 attestation_style = 1
 seal_policy = "MRSIGNER"
 exe_policy = { Multiply = { executors = 8 } }
@@ -171,7 +171,7 @@ Parameter Descriptions:
 
 - **`network_config.peer_key`**: Specifies the keyring service's P2P identity information. If not filled, it will be generated randomly.
 
-- **`key_server_config.version`**: The version number required for keyring service registration. This version number is jointly maintained by BOOLNetwork official and the community. It increases as the keyring software's functionality is upgraded or changed. Users should not change it arbitrarily, as it may cause the software to malfunction. The specific software version number and registration version can be found in official information.
+- **`key_server_config.version`**: The version number necessary for keyring service registration is a collaborative effort between BOOLNetwork official and the community. It increments as the functionality of the keyring software is enhanced or altered. Users should refrain from making arbitrary changes, as it may lead to software malfunctions. The exact software version number and registration version can be obtained from official information.
 
 - **`key_server_config.attestation_style`**: The mode of SGX remote attestation for the keyring service, where `1` represents `EPID` and `2` represents `DCAP`.
 
@@ -206,18 +206,18 @@ docker compose up -d
 docker compose logs -f 
 ```
 
-Wait for the software to start. If there are any errors, refer to the [FAQ](#FAQ)。
+Wait for the software to initiate. In case of any errors, consult the [FAQ](#FAQ).
 
-If the software is running normally, you will see logs similar to the following in the terminal:
+If the software is running correctly, you will observe logs similar to the following in the terminal:
 
 ```text
 register sgx: "0x13bec2ac21b038d885d49d8100d307ce7761cf890bbdf25962a0eb2f2ac18101"
 ```
 
-In the [Apps Management Tool](https://apps.bool.network/?rpc=wss%3A%2F%2Ftest-rpc-node-ws.bool.network#/explorer) you can observe:
+In the [Apps Management Tool](https://apps.bool.network/?rpc=wss%3A%2F%2Fdev-rpc-node-ws.bool.network#/explorer) you can observe:
 ![apps-device-register](./images/apps-device-register.jpg)
 
-Upon linking your `Identity` account to [Boolscan's device](https://test.boolscan.com/dashboard/device), unlisted devices will initially appear in the device list:
+Upon linking your `Identity` account to [Boolscan's device](https://dashboard.boolscan.com/device?network=devnet), unlisted devices will initially appear in the device list:
 
 ![boolscan-unlisted](./images/boolscan-unlisted.jpg)
 
@@ -225,7 +225,7 @@ Upon linking your `Identity` account to [Boolscan's device](https://test.boolsca
 
 #### Creating Provider
 
-On the [Boolscan's provider](https://test.boolscan.com/dashboard/provider) to create a provider instance for staking an amount not less than 1 tBol.
+On the [Boolscan's provider](https://dashboard.boolscan.com/?network=devnet) to create a provider instance for staking an amount not less than 1 tBol.
 
 ![boolscan-create-provider](./images/boolscan-create-provider.jpg)
 
@@ -233,7 +233,7 @@ Tip: A provider can be associated with multiple devices, but each device can onl
 
 #### Binding PID
 
-After creating the provider, return to the [Boolscan's device](https://test.boolscan.com/dashboard/device) to bind the unlisted devices to the provider for device activation.
+After creating the provider, return to the [Boolscan's device](https://dashboard.boolscan.com/device?network=devnet) to bind the unlisted devices to the provider for device activation.
 
 ![boolscan-bind-pid](./images/boolscan-bind-pid.jpg)
 
@@ -284,5 +284,5 @@ it means that the `identity` field in `keyring.toml` has an incorrect input form
 
 * If there is no device registration information on Boolscan or you receive the error message： register failed for "Rpc error: RPC error: RPC call failed: ErrorObject { code: ServerError(1010), message: \"Invalid Transaction\", data: Some(RawValue(\"Inability to pay some fees (e.g. account balance too low)\")) }
 
-it indicates that the account under `identity` does not have a sufficient balance. To address this, use the command `curl https://bot.bool.network/coin/tBol/47/<Account ID/Address>`to claim test coins.
+it indicates that the account under `identity` does not have a sufficient balance. To address this, use the command `curl https://dev-bot.bool.network/coin/tBol/47/<Account ID/Address>`to claim test coins.
 
