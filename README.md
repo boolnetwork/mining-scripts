@@ -99,13 +99,13 @@ We recommend using MetaMask here because subsequent operations will require inte
 To claim test coins, use the command:
 
 ```shell
-curl https://dev-bot.bool.network/coin/tBol/47/<Account ID/Address>
+curl https://bot.bool.network/coin/tBol/478/<Account ID/Address>
 ```
 
 Example:
 
 ```shell
-curl https://dev-bot.bool.network/coin/tBol/47/0x34a5572cb21d34354e3091564d5edc7b791e9d5f
+curl https://bot.bool.network/coin/tBol/478/0x34a5572cb21d34354e3091564d5edc7b791e9d5f
 ```
 
 ### Configuration Modification
@@ -284,5 +284,5 @@ it means that the `identity` field in `keyring.toml` has an incorrect input form
 
 * If there is no device registration information on Boolscan or you receive the error message： register failed for "Rpc error: RPC error: RPC call failed: ErrorObject { code: ServerError(1010), message: \"Invalid Transaction\", data: Some(RawValue(\"Inability to pay some fees (e.g. account balance too low)\")) }
 
-it indicates that the account under `identity` does not have a sufficient balance. To address this, use the command `curl https://dev-bot.bool.network/coin/tBol/47/<Account ID/Address>`to claim test coins.
+it indicates that the account under `identity` does not have a sufficient balance. To address this, use the command `curl https://bot.bool.network/coin/tBol/478/<Account ID/Address>`to claim test coins.
 
