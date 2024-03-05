@@ -2,7 +2,7 @@ version: "3"
 services:
   bnk-occlum-keyring:
     image: boolnetwork/bnk-occlum-keyring-epid:v0.5.2 #镜像不同，配置文件中attestation_style参数数值不同
-    # image: boolnetwork/bnk-occlum-keyring-dcap:pre-release
+    # mage: boolnetwork/bnk-occlum-keyring-dcap:pre-release
     restart: always
     network_mode: "host"
     # ports:
