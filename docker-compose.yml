@@ -16,4 +16,4 @@ services:
     devices:
         - /dev/sgx/enclave:/dev/sgx/enclave
         - /dev/sgx/provision:/dev/sgx/provision
-    command: bash -c 'cp /configs/keyring.toml /root/occlum_instance; source /root/.bashrc; cd /root/occlum_instance; occlum print mrsigner; occlum print mrenclave; occlum run /bin/bnk-watcher /host/keyring.toml'
+    command: bash -c 'cp /configs/keyring.toml /root/occlum_instance; apt update;apt install curl -y; source /root/.bashrc; cd /root/occlum_instance; occlum print mrsigner; occlum print mrenclave; occlum run /bin/bnk-watcher /host/keyring.toml'
