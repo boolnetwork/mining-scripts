@@ -1,7 +1,8 @@
 version: "3"
 services:
   bnk-occlum-keyring:
-    image: boolnetwork/bnk-occlum-keyring-epid:v0.5.2
+    image: boolnetwork/bnk-occlum-keyring-epid:v0.5.2  #Different images result in different values for the attestation_style parameter in the configuration file
+    # image: boolnetwork/bnk-occlum-keyring-dcap:pre-release
     restart: always
     network_mode: "host"
     # ports:
