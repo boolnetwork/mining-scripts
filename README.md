@@ -149,7 +149,7 @@ only_global_ips = true
 
 [key_server_config]
 version = 1
-attestation_style = 1
+attestation_style = 1 #This corresponds to using an image, epid=1, dcap=2
 seal_policy = "MRSIGNER"
 exe_policy = { Multiply = { executors = 8 } }
 round_time_limit = 60
