@@ -141,7 +141,7 @@ only_global_ips = true
 
 [key_server_config]
 version = 1
-attestation_style = 1
+attestation_style = 1  #此处与使用镜像需对应，epid=1,dcap=2
 seal_policy = "MRSIGNER"
 exe_policy = { Multiply = { executors = 8 } }
 round_time_limit = 60
