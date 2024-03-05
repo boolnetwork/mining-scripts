@@ -33,6 +33,14 @@ Inspect your system's SGX support with:
 ./sgx-detect
 ```
 
+Install sgx driver:
+```
+apt update
+apt install  build-essential  automake autoconf libtool wget python libssl-dev dkms
+wget https://download.01.org/intel-sgx/latest/linux-latest/distro/ubuntu18.04-server/sgx_linux_x64_driver_1.41.bin
+bash sgx_linux_x64_driver_1.41.bin
+```
+
 Sample Output:
 
 ```text
