@@ -1,8 +1,8 @@
 version: "3"
 services:
   bnk-occlum-keyring:
-    image: boolnetwork/bnk-occlum-keyring-epid:v0.5.2  #Different images result in different values for the attestation_style parameter in the configuration file
-    # image: boolnetwork/bnk-occlum-keyring-dcap:pre-release
+    #image: boolnetwork/bnk-occlum-keyring-epid:v0.5.2  #Different images result in different values for the attestation_style parameter in the configuration file
+    image: boolnetwork/bnk-occlum-keyring-dcap:v0.6.4
     restart: always
     network_mode: "host"
     # ports:
@@ -16,4 +16,4 @@ services:
     devices:
         - /dev/sgx/enclave:/dev/sgx/enclave
         - /dev/sgx/provision:/dev/sgx/provision
-    command: bash -c 'cp /configs/keyring.toml /root/occlum_instance; source /root/.bashrc; cd /root/occlum_instance; occlum print mrsigner; occlum print mrenclave; occlum run /bin/bnk-watcher /host/keyring.toml'
+    command: bash -c 'cp /configs/keyring.toml /root/occlum_instance; apt update; apt install curl -y; source /root/.bashrc; cd /root/occlum_instance; occlum print mrsigner; occlum print mrenclave; occlum run /bin/bnk-watcher /host/keyring.toml'
