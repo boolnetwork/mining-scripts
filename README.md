@@ -148,7 +148,7 @@ share_peer_interval = 30
 only_global_ips = true
 
 [key_server_config]
-version = 2
+version = 3
 attestation_style = 2 #This corresponds to using an image, epid=1, dcap=2
 seal_policy = "MRSIGNER"
 exe_policy = { Multiply = { executors = 8 } }
