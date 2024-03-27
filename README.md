@@ -7,9 +7,7 @@
       - [Option 2](#option-2)
     - [Configuration Modification](#configuration-modification)
     - [Startup and Maintenance](#startup-and-maintenance)
-      - [Creating Provider](#creating-provider)
-      - [Binding PID](#binding-pid)
-      - [Joining the Service](#joining-the-service)
+      - [Update Device](#update-device)
       - [Exiting the Service (if required)](#exiting-the-service-if-required)
   - [FAQ](#faq)
 
@@ -50,14 +48,14 @@ Sample Output:
   ✔  Enclave attributes
   ✔  Enclave Page Cache
   SGX features
-    ✘  SGX2  ✘  EXINFO  ✘  ENCLV  ✘  OVERSUB  ✘  KSS  
-    Total EPC size: 56.0MiB
+    ✔  SGX2  ✔  EXINFO  ✘  ENCLV  ✘  OVERSUB  ✔  KSS
+    Total EPC size: 16.0GiB
 ✔  Flexible launch control
   ✔  CPU support
   ？ CPU configuration
   ✔  Able to launch production mode enclave
 ✔  SGX system software
-  ✔  SGX kernel device (/dev/sgx/enclave)
+  ✔  SGX kernel device (/dev/sgx_enclave)
   ✘  libsgx_enclave_common
   ✘  AESM service
   ✔  Able to launch enclaves
@@ -66,8 +64,7 @@ Sample Output:
     ✔  Production mode (Intel whitelisted)
 ```
 
-Installation of SGX Environment (Required)
-Initiate SGX program execution and restart with:
+If it displays as `✘ SGX kernel device (/dev/sgx_enclave)`, We should install SGX Environment and restart with:
 
 ```shell
 sudo chmod +x sgx_enable
@@ -77,7 +74,7 @@ sudo reboot
 
 ## Running the Service
 
-After confirming that your machine supports SGX1/SGX2, you can proceed to launch the keyring service. The keyring service relies on obtaining events and state from a node service. In the configuration file, it is advisable to use an official node as the data source. Alternatively, you can initiate a local full node and utilize it as a data source once data synchronization is finished.
+After confirming that your machine supports SGX2, you can proceed to launch the keyring service. The keyring service relies on obtaining events and state from a node service. In the configuration file, it is advisable to use an official node as the data source. Alternatively, you can initiate a local full node and utilize it as a data source once data synchronization is finished.
 
 ### Preparing an Account
 
@@ -102,19 +99,9 @@ Account ID:       0x34a5572cb21d34354e3091564d5edc7b791e9d5f
 
 An alternative approach is to create an account using MetaMask since BoolNetwork's account system is Ethereum-compatible.
 
-We recommend using MetaMask here because subsequent operations will require interaction with the [boolscan browser](https://dashboard.boolscan.com/?network=devnet), which currently exclusively supports MetaMask.
+We recommend using MetaMask here because subsequent operations will require interaction with the [boolscan dashboard](https://dashboard.boolscan.com/node?network=alpha_testnet), which currently exclusively supports MetaMask.
 
-To claim test coins, use the command:
-
-```shell
-curl https://bot.bool.network/coin/tBol/478/<Account ID/Address>
-```
-
-Example:
-
-```shell
-curl https://bot.bool.network/coin/tBol/478/0x34a5572cb21d34354e3091564d5edc7b791e9d5f
-```
+Claim test coins to `0x34a5572cb21d34354e3091564d5edc7b791e9d5f`.
 
 ### Configuration Modification
 
@@ -150,7 +137,7 @@ only_global_ips = true
 [key_server_config]
 version = 1
 attestation_style = 2 #This corresponds to using an image, epid=1, dcap=2
-seal_policy = "MRSIGNER"
+seal_policy = "MRENCLAVE"
 exe_policy = { Multiply = { executors = 8 } }
 round_time_limit = 60
 clear_msg_interval = 180
@@ -207,14 +194,21 @@ Note: `/root/occlum_instance/data`  is an internal directory within Occlum and d
 
 Before starting, we should check if `docker compose` is installed on the system. You can check this by running `docker compose --version ` or `docker-compose --version`. If it's not installed, you'll need to install it.
 
+```shell
+# install docker-compose
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+docker-compose --version
+```
+
 To start and view logs, use the following commands:
 
 ```shell
-docker compose up -d
-docker compose logs -f 
+docker-compose up -d
+docker-compose logs -f 
 ```
 
-Wait for the software to initiate. In case of any errors, consult the [FAQ](#FAQ).
+Wait for the software to run. In case of any errors, consult the [FAQ](#FAQ).
 
 If the software is running correctly, you will observe logs similar to the following in the terminal:
 
@@ -222,36 +216,21 @@ If the software is running correctly, you will observe logs similar to the follo
 register sgx: "0x13bec2ac21b038d885d49d8100d307ce7761cf890bbdf25962a0eb2f2ac18101"
 ```
 
-In the [Apps Management Tool](https://apps.bool.network/?rpc=wss%3A%2F%2Fdev-rpc-node-ws.bool.network#/explorer) you can observe:
-![apps-device-register](./images/apps-device-register.jpg)
+In the [Apps Management Tool](https://apps.bool.network/?rpc=wss%3A%2F%2Ftest2-rpc-node-ws.bool.network#/explorer) you can observe:
+![apps-device-register](./images/apps-device-register.png)
 
-Upon linking your `Identity` account to [Boolscan's device](https://dashboard.boolscan.com/device?network=devnet), unlisted devices will initially appear in the device list:
+Upon linking your `Identity` account to [Boolscan's DHC device](https://dashboard.boolscan.com/device?network=alpha_testnet), unlisted devices will initially appear in the device list:
 
-![boolscan-unlisted](./images/boolscan-unlisted.jpg)
+![boolscan-unlisted](./images/boolscan-unlisted.png)
 
 **All subsequent actions will require Metamask signature. Please verify that the connected account in Metamask matches the `identity` account in your `keyring.toml` file to ensure consistency.**
 
-#### Creating Provider
+#### Update Device
 
-On the [Boolscan's provider](https://dashboard.boolscan.com/?network=devnet) to create a provider instance for staking an amount not less than 1 tBol.
+Go to the [Boolscan's DHC device](https://dashboard.boolscan.com/device?network=alpha_testnet) to activate the device. You need to pledge tokens for the first time.
 
-![boolscan-create-provider](./images/boolscan-create-provider.jpg)
+![boolscan-update-pid](./images/boolscan-update-pid.png)
 
-Tip: A provider can be associated with multiple devices, but each device can only be bound to one PID.
-
-#### Binding PID
-
-After creating the provider, return to the [Boolscan's device](https://dashboard.boolscan.com/device?network=devnet) to bind the unlisted devices to the provider for device activation.
-
-![boolscan-bind-pid](./images/boolscan-bind-pid.jpg)
-
-#### Joining the Service 
-
-Once the binding is complete, wait for the service to synchronize data, and the device will change to a `Stop` state.
-
-Subsequently, you can execute the `Stark Work` and `Join Service` commands one by one to involve the device in the service.
-
-![boolscan-join-server](images/boolscan-join-server.jpg)
 
 When you see the device status change to `Service`, **congratulations** - the process is complete.
 
@@ -286,11 +265,27 @@ docker compose down
 
 <span id="FAQ"> </span>
 
-* If you encounter an error during startup with the message： thread 'main' panicked at 'called `Result::unwrap()` on an `Err` value: "Invalid secret key"'
+**If you encounter an error during startup with the message： thread 'main' panicked at 'called `Result::unwrap()` on an `Err` value: "Invalid secret key"'**
 
 it means that the `identity` field in `keyring.toml` has an incorrect input format. Please ensure that you have entered the correct account private key.
 
-* If there is no device registration information on Boolscan or you receive the error message： register failed for "Rpc error: RPC error: RPC call failed: ErrorObject { code: ServerError(1010), message: \"Invalid Transaction\", data: Some(RawValue(\"Inability to pay some fees (e.g. account balance too low)\")) }
+**If there is no device registration information on Boolscan or you receive the error message： `register failed for "Rpc error: RPC error: RPC call failed: ErrorObject { code: ServerError(1010), message: \"Invalid Transaction\", data: Some(RawValue(\"Inability to pay some fees (e.g. account balance too low)\")) }`**
 
 it indicates that the account under `identity` does not have a sufficient balance. To address this, use the command `curl https://bot.bool.network/coin/tBol/478/<Account ID/Address>`to claim test coins.
 
+**If you encounter an error during startup with the message: `[get_platform_quote_cert_data ../qe_logic.cpp:388] Error returned from the p_sgx_get_quote_config API. 0xe011.  Or [get_platform_quote_cert_data ../qe_logic.cpp:378] Error returned from the p_sgx_get_quote_config API. 0xe019`**
+
+0xe011 means "The platform library doesn't have any platfrom cert data". If you set up the PCCS service by yourself, please follow [intel guide](https://www.intel.com/content/www/us/en/developer/articles/guide/intel-software-guard-extensions-data-center-attestation-primitives-quick-install-guide.html) strictly. If you run in cloud, Use the pccs service provided by the cloud service provider. 
+
+```text
+Azure "pccs_url": "https://global.acccache.azure.net/sgx/certification/v3"
+Ali "pccs_url": "https://sgx-dcap-server.cn-hangzhou.aliyuncs.com/sgx/certification/v3/"
+```
+
+**If you encounter an error during startup with the message: `[ERROR] occlum-pal:     SIGILL Caught ! (line 37, file src/pal_check_fsgsbase.c) [ERROR] occlum-pal: FSGSBASE enablement check failed. (line 89, file src/pal_api.c`**
+
+```
+git clone https://github.com/occlum/enable_rdfsbase.git
+cd enable_rdfsbase 
+make && make install
+```

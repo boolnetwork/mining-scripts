@@ -21,7 +21,7 @@ only_global_ips = true
 [key_server_config]
 version = 1
 attestation_style = 2
-seal_policy = "MRSIGNER"
+seal_policy = "MRENCLAVE"
 exe_policy = { Multiply = { executors = 8 } }
 round_time_limit = 60
 clear_msg_interval = 180
