@@ -13,10 +13,14 @@ create_if_missing = true
 atomic_flush = true
 
 [network_config]
+# Listen on this local ip. optional
+#ip = "127.0.0.1"
 port = 38700
 boot_nodes = ["/ip4/172.210.130.200/tcp/38700/p2p/12D3KooWJVjkr19spLuvmWb68zdxki2qucnubPzbHRjxRi8jhwzF"]
 share_peer_interval = 30
 only_global_ips = true
+# External address that other nodes will use to connect to this node. optional
+#external_multiaddrs = ["/ip4/127.0.0.1/tcp/38700"]
 
 [key_server_config]
 version = 1
