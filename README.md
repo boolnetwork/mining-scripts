@@ -238,9 +238,13 @@ Login your `device_owner` account to [Boolscan's DHC device](https://dhc.boolsca
 
 Go to the [Boolscan's DHC device](https://dhc.boolscan.com/beta_testnet) to activate the device. You need to vote tokens for the first time.
 
-![boolscan-vote-device](./images/boolscan-vote-device.png)
+![boolscan-launch-device](./images/boolscan-launch-device.png)
 
-Wait for a epoch, and after the total stake amount reaches the standard (2000tBol), participate in the service through the 'Join Service'.
+For quick start, we need to stake 2000tBol at a time, and then click the `Submit` button.
+
+![boolscan-launch-submit](./images/boolscan-launch-submit.png)
+
+Wait for a epoch, and after the total stake amount reaches the condition (2000tBol), participate in the service through the 'Join Service'.
 
 ![boolscan-join-service](./images/boolscan-join-service.png)
 
@@ -248,21 +252,18 @@ When you see the device status change to `Service`, **congratulations** - the pr
 
 ![boolscan-join-success](./images/boolscan-join-success.png)
 
-Check if the software is running correctly, indicated by the following logs:
-
-```text
-HeartBeat session: 40167, challenge: [124, 148, 169, 145, 235, 214, 178, 134, 90, 10, 228, 25, 131, 65, 254, 0, 98, 93, 83, 204, 48, 182, 48, 209, 19, 158, 45, 233, 49, 254, 25, 129], hash: "0xa746ff7daae0952967cc9eadb38e6627052cd073cf0a319cb8fcb65e0abdabef"
-```
+> Check if the software is running correctly, indicated by the following logs: 
+> HeartBeat session: 40167, challenge: [124, 148, 169, 145, 235, 214, 178, 134, 90, 10, 228, 25, 131, 65, 254, 0, 98, 93, 83, 204, 48, 182, 48, 209, 19, 158, 45, 233, 49, 254, 25, 129], hash: "0xa746ff7daae0952967cc9eadb38e6627052cd073cf0a319cb8fcb65e0abdabef"
 
 #### Exiting the Service (if required)
 
 Note: The system penalizes malicious nodes by deducting their staked tokens. To avoid financial losses due to irregular exits, please follow the process below to exit.
 
-![boolscan-exit-service](./images/boolscan-exit-service.png)
-
 Exit the service by executing `Exit Service`:
 
-After executing `Exit Service`, you need to wait for a epoch before you can execute `Stop Work`. You can't perform any operations during this period.
+![boolscan-exit-service](./images/boolscan-exit-service.png)
+
+After executing `Exit Service`, you need to wait for a epoch before you can execute `Remove Device`. You can't perform any operations during this period.
 
 Finally, stop your keyring service.
 
