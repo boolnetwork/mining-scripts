@@ -5,6 +5,7 @@
     - [Preparing an Account](#preparing-an-account)
       - [Option 1](#option-1)
       - [Option 2](#option-2)
+    - [Preparing Coin](#preparing-coin)
     - [Configuration Modification](#configuration-modification)
     - [Startup and Maintenance](#startup-and-maintenance)
       - [Update Device](#update-device)
@@ -101,14 +102,16 @@ An alternative approach is to create an account using MetaMask since BoolNetwork
 
 We recommend using MetaMask here because subsequent operations will require interaction with the [boolscan dashboard](https://dashboard.boolscan.com/node?network=alpha_testnet), which currently exclusively supports MetaMask.
 
-Claim test coins to `0x34a5572cb21d34354e3091564d5edc7b791e9d5f`.
+### Preparing Coin
+
+Prepare some tBOL with your address to make sure for the deployment. 
 
 ### Configuration Modification
 
-For the majority of users, just substitute the `identity` in the default configuration file with the `Secret seed` created in the previous step. There is no need to modify other parameters.
+For the majority of users, just substitute the `device_owner` in the default configuration file with the `Account ID` created in the previous step. There is no need to modify other parameters.
 
 For example：
-Open the `keyring.toml` file under the `configs` directory and replace `0x0000000000000000000000000000000000000000000000000000000000000000`with your `<Secret seed>`。
+Open the `keyring.toml` file under the `configs` directory and replace `0x00000000000000000000000000000000000000`with your `<Account ID>`。
 
 The default configuration file, encompassing identity information, service ports, P2P network, service launch types, etc., is as follows：
 
@@ -116,8 +119,8 @@ The default configuration file, encompassing identity information, service ports
 node_ws_url = "ws://172.210.130.200:9944"
 # local node_call server port.
 node_call_port = 8720
-# used to generate LocalKeyStore, used to get AccountId in substrate.
-identity = "0x0000000000000000000000000000000000000000000000000000000000000000"
+# the owner address of device （ETH type format）
+device_owner = "0x00000000000000000000000000000000000000"
 # database path
 db_path = "/host/data"
 # tokio console port
@@ -132,23 +135,24 @@ atomic_flush = true
 port = 38700
 boot_nodes = ["/ip4/172.210.130.200/tcp/38700/p2p/12D3KooWJVjkr19spLuvmWb68zdxki2qucnubPzbHRjxRi8jhwzF"]
 share_peer_interval = 30
-only_global_ips = true
+protocol_id = "betatestnet"
 
 [key_server_config]
 version = 1
 attestation_style = 2 #This corresponds to using an image, epid=1, dcap=2
 seal_policy = "MRENCLAVE"
 exe_policy = { Multiply = { executors = 8 } }
-round_time_limit = 60
-clear_msg_interval = 180
+round_time_limit = 180
+clear_msg_interval = 360
 ```
 
 Parameter Descriptions:
+
 - **`node_ws_url`**: The accessible endpoint of the node service. If using a local port, it might be `ws://127.0.0.1:9944`.
 
 - **`node_call_port`**: The port number through which the keyring service is exposed to the outside world.
 
-- **`identity`**: The holder of the keyring service, a crucial factor affecting income and penalties for providing services.
+- **`identity`**: The owner of the keyring service, a crucial factor affecting income and penalties for providing services.
 
 - **`db_path`**: The storage path for the keyring service to persist data. It is not recommended to modify this. If you need to change it, please refer to the [occlum file system](https://occlum.readthedocs.io/en/latest/filesystem/fs_overview.html).
 
@@ -156,7 +160,15 @@ Parameter Descriptions:
 
 - **`db_option.atomic_flush`**: Runtime parameters for the RocksDB database exposed by the keyring service.
 
+- **`network_config.protocol_id`**: The division of P2P network protocols is particularly important. Different networks have different `protocol_id`. Please follow the official configuration, otherwise the link will be invalid.
+
 - **`network_config.port`**: The local port number for the keyring service's P2P.
+
+- **`network_config.is_mdns`**: MDNS discovery enabled.
+
+- **`network_config.is_autonat`**: Autonat discovery enabled.
+  
+- **`network_config.max_peers_connected`**: Maximum number of nodes allowed to be connected.
 
 - **`network_config.boot_nodes`**: Information for the keyring service's P2P module to connect to other services. If configured incorrectly, it will become an isolated node and cannot participate in the service.
 
@@ -216,18 +228,18 @@ If the software is running correctly, you will observe logs similar to the follo
 register sgx: "0x13bec2ac21b038d885d49d8100d307ce7761cf890bbdf25962a0eb2f2ac18101"
 ```
 
-In the [Apps Management Tool](https://apps.bool.network/?rpc=wss%3A%2F%2Ftest2-rpc-node-ws.bool.network#/explorer) you can observe:
+In the [Apps Management Tool](https://apps.bool.network/?rpc=wss%3A%2F%2Fbetatest-rpc-node-ws.bool.network#/explorer) you can observe:
 ![apps-device-register](./images/apps-device-register.png)
 
-Upon linking your `Identity` account to [Boolscan's DHC device](https://dashboard.boolscan.com/device?network=alpha_testnet), unlisted devices will initially appear in the device list:
+Upon linking your `device_owner` account to [Boolscan's DHC device](https://dashboard.boolscan.com/device?network=beta_testnet), unlisted devices will initially appear in the device list:
 
 ![boolscan-unlisted](./images/boolscan-unlisted.png)
 
-**All subsequent actions will require Metamask signature. Please verify that the connected account in Metamask matches the `identity` account in your `keyring.toml` file to ensure consistency.**
+**All subsequent actions will require Metamask signature. Please verify that the connected account in Metamask matches the `device_owner` account in your `keyring.toml` file to ensure consistency.**
 
 #### Update Device
 
-Go to the [Boolscan's DHC device](https://dashboard.boolscan.com/device?network=alpha_testnet) to activate the device. You need to pledge tokens for the first time.
+Go to the [Boolscan's DHC device](https://dashboard.boolscan.com/device?network=beta_testnet) to activate the device. You need to pledge tokens for the first time.
 
 ![boolscan-update-pid](./images/boolscan-update-pid.png)
 
@@ -238,9 +250,6 @@ Check if the software is running correctly, indicated by the following logs:
 
 ```text
 HeartBeat session: 40167, challenge: [124, 148, 169, 145, 235, 214, 178, 134, 90, 10, 228, 25, 131, 65, 254, 0, 98, 93, 83, 204, 48, 182, 48, 209, 19, 158, 45, 233, 49, 254, 25, 129], hash: "0xa746ff7daae0952967cc9eadb38e6627052cd073cf0a319cb8fcb65e0abdabef"
-
-send enter err cid-epoch-fork: 303-8096-0
-send enter err cid-epoch-fork: 307-6968-1
 ```
 
 #### Exiting the Service (if required)
@@ -249,11 +258,9 @@ Note: The system penalizes malicious nodes by deducting their staked tokens. To 
 
 ![boolscan-exit-server](./images/boolscan-exit-server.jpg)
 
-Exit the service by executing `Exit Service` and `Stop Work` in sequence:
+Exit the service by executing `Exit Service`:
 
 1. After executing `Exit Service`, you need to wait for a epoch before you can execute `Stop Work`. You can't perform any operations during this period.
-   
-2. After executing `Stop Work`, the device's status will be `Stop`. Only then can you stop the keyring service; otherwise, there may be penalties.
 
 Finally, stop your keyring service.
 
@@ -265,13 +272,9 @@ docker compose down
 
 <span id="FAQ"> </span>
 
-**If you encounter an error during startup with the message： thread 'main' panicked at 'called `Result::unwrap()` on an `Err` value: "Invalid secret key"'**
+**If there is no device registration information on Boolscan or you receive the error message： `register failed for "Rpc error: RPC error: RPC call failed: ErrorObject { code: ServerError(1010), message: \"Invalid Transaction\", data: Some(RawValue(\"Custom error: 28\")) }`**
 
-it means that the `identity` field in `keyring.toml` has an incorrect input format. Please ensure that you have entered the correct account private key.
-
-**If there is no device registration information on Boolscan or you receive the error message： `register failed for "Rpc error: RPC error: RPC call failed: ErrorObject { code: ServerError(1010), message: \"Invalid Transaction\", data: Some(RawValue(\"Inability to pay some fees (e.g. account balance too low)\")) }`**
-
-it indicates that the account under `identity` does not have a sufficient balance. To address this, use the command `curl https://bot.bool.network/coin/tBol/478/<Account ID/Address>`to claim test coins.
+It indicates that keyring version number does not match.
 
 **If you encounter an error during startup with the message: `[get_platform_quote_cert_data ../qe_logic.cpp:388] Error returned from the p_sgx_get_quote_config API. 0xe011.  Or [get_platform_quote_cert_data ../qe_logic.cpp:378] Error returned from the p_sgx_get_quote_config API. 0xe019`**
 
