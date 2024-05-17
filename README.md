@@ -228,23 +228,25 @@ If the software is running correctly, you will observe logs similar to the follo
 register sgx: "0x13bec2ac21b038d885d49d8100d307ce7761cf890bbdf25962a0eb2f2ac18101"
 ```
 
-In the [Apps Management Tool](https://apps.bool.network/?rpc=wss%3A%2F%2Fbetatest-rpc-node-ws.bool.network#/explorer) you can observe:
-![apps-device-register](./images/apps-device-register.png)
+Login your `device_owner` account to [Boolscan's DHC device](https://dhc.boolscan.com/beta_testnet), unlisted devices will initially appear in the device list:
 
-Upon linking your `device_owner` account to [Boolscan's DHC device](https://dashboard.boolscan.com/device?network=beta_testnet), unlisted devices will initially appear in the device list:
-
-![boolscan-unlisted](./images/boolscan-unlisted.png)
+![boolscan-device-unlist](./images/boolscan-device-unlist.png)
 
 **All subsequent actions will require Metamask signature. Please verify that the connected account in Metamask matches the `device_owner` account in your `keyring.toml` file to ensure consistency.**
 
 #### Update Device
 
-Go to the [Boolscan's DHC device](https://dashboard.boolscan.com/device?network=beta_testnet) to activate the device. You need to pledge tokens for the first time.
+Go to the [Boolscan's DHC device](https://dhc.boolscan.com/beta_testnet) to activate the device. You need to vote tokens for the first time.
 
-![boolscan-update-pid](./images/boolscan-update-pid.png)
+![boolscan-vote-device](./images/boolscan-vote-device.png)
 
+Wait for a epoch, and after the total stake amount reaches the standard (2000tBol), participate in the service through the 'Join Service'.
+
+![boolscan-join-service](./images/boolscan-join-service.png)
 
 When you see the device status change to `Service`, **congratulations** - the process is complete.
+
+![boolscan-join-success](./images/boolscan-join-success.png)
 
 Check if the software is running correctly, indicated by the following logs:
 
@@ -256,11 +258,11 @@ HeartBeat session: 40167, challenge: [124, 148, 169, 145, 235, 214, 178, 134, 90
 
 Note: The system penalizes malicious nodes by deducting their staked tokens. To avoid financial losses due to irregular exits, please follow the process below to exit.
 
-![boolscan-exit-server](./images/boolscan-exit-server.jpg)
+![boolscan-exit-service](./images/boolscan-exit-service.png)
 
 Exit the service by executing `Exit Service`:
 
-1. After executing `Exit Service`, you need to wait for a epoch before you can execute `Stop Work`. You can't perform any operations during this period.
+After executing `Exit Service`, you need to wait for a epoch before you can execute `Stop Work`. You can't perform any operations during this period.
 
 Finally, stop your keyring service.
 
