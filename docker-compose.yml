@@ -1,18 +1,15 @@
 version: "3"
 services:
   bnk-occlum-keyring:
-    #image: boolnetwork/bnk-occlum-keyring-epid:v0.5.2  #Different images result in different values for the attestation_style parameter in the configuration file
-    image: boolnetwork/bnk-occlum-keyring-dcap:v0.6.6
+    image: boolnetwork/bnk-occlum-keyring-dcap:v0.6.7
     restart: always
     network_mode: "host"
-    # ports:
-    #     - "8720:8720"
-    #     - "38700:38700"
     environment:
         RUST_LOG: info
     volumes:
         - ./configs:/configs
         - ./data:/root/occlum_instance/data
+        - ./configs/sgx_default_qcnl.conf:/etc/sgx_default_qcnl.conf
     devices:
         - /dev/sgx/enclave:/dev/sgx/enclave
         - /dev/sgx/provision:/dev/sgx/provision

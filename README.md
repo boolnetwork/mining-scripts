@@ -5,11 +5,10 @@
     - [Preparing an Account](#preparing-an-account)
       - [Option 1](#option-1)
       - [Option 2](#option-2)
+    - [Preparing Coin](#preparing-coin)
     - [Configuration Modification](#configuration-modification)
     - [Startup and Maintenance](#startup-and-maintenance)
-      - [Creating Provider](#creating-provider)
-      - [Binding PID](#binding-pid)
-      - [Joining the Service](#joining-the-service)
+      - [Update Device](#update-device)
       - [Exiting the Service (if required)](#exiting-the-service-if-required)
   - [FAQ](#faq)
 
@@ -50,14 +49,14 @@ Sample Output:
   ✔  Enclave attributes
   ✔  Enclave Page Cache
   SGX features
-    ✘  SGX2  ✘  EXINFO  ✘  ENCLV  ✘  OVERSUB  ✘  KSS  
-    Total EPC size: 56.0MiB
+    ✔  SGX2  ✔  EXINFO  ✘  ENCLV  ✘  OVERSUB  ✔  KSS
+    Total EPC size: 16.0GiB
 ✔  Flexible launch control
   ✔  CPU support
   ？ CPU configuration
   ✔  Able to launch production mode enclave
 ✔  SGX system software
-  ✔  SGX kernel device (/dev/sgx/enclave)
+  ✔  SGX kernel device (/dev/sgx_enclave)
   ✘  libsgx_enclave_common
   ✘  AESM service
   ✔  Able to launch enclaves
@@ -66,8 +65,7 @@ Sample Output:
     ✔  Production mode (Intel whitelisted)
 ```
 
-Installation of SGX Environment (Required)
-Initiate SGX program execution and restart with:
+If it displays as `✘ SGX kernel device (/dev/sgx_enclave)`, We should install SGX Environment and restart with:
 
 ```shell
 sudo chmod +x sgx_enable
@@ -77,7 +75,7 @@ sudo reboot
 
 ## Running the Service
 
-After confirming that your machine supports SGX1/SGX2, you can proceed to launch the keyring service. The keyring service relies on obtaining events and state from a node service. In the configuration file, it is advisable to use an official node as the data source. Alternatively, you can initiate a local full node and utilize it as a data source once data synchronization is finished.
+After confirming that your machine supports SGX2, you can proceed to launch the keyring service. The keyring service relies on obtaining events and state from a node service. In the configuration file, it is advisable to use an official node as the data source. Alternatively, you can initiate a local full node and utilize it as a data source once data synchronization is finished.
 
 ### Preparing an Account
 
@@ -102,26 +100,18 @@ Account ID:       0x34a5572cb21d34354e3091564d5edc7b791e9d5f
 
 An alternative approach is to create an account using MetaMask since BoolNetwork's account system is Ethereum-compatible.
 
-We recommend using MetaMask here because subsequent operations will require interaction with the [boolscan browser](https://dashboard.boolscan.com/?network=devnet), which currently exclusively supports MetaMask.
+We recommend using MetaMask here because subsequent operations will require interaction with the [boolscan dashboard](https://dashboard.boolscan.com/node?network=alpha_testnet), which currently exclusively supports MetaMask.
 
-To claim test coins, use the command:
+### Preparing Coin
 
-```shell
-curl https://bot.bool.network/coin/tBol/478/<Account ID/Address>
-```
-
-Example:
-
-```shell
-curl https://bot.bool.network/coin/tBol/478/0x34a5572cb21d34354e3091564d5edc7b791e9d5f
-```
+Prepare some tBOL with your address to make sure for the deployment. 
 
 ### Configuration Modification
 
-For the majority of users, just substitute the `identity` in the default configuration file with the `Secret seed` created in the previous step. There is no need to modify other parameters.
+For the majority of users, just substitute the `device_owner` in the default configuration file with the `Account ID` created in the previous step. There is no need to modify other parameters.
 
 For example：
-Open the `keyring.toml` file under the `configs` directory and replace `0x0000000000000000000000000000000000000000000000000000000000000000`with your `<Secret seed>`。
+Open the `keyring.toml` file under the `configs` directory and replace `0x00000000000000000000000000000000000000`with your `<Account ID>`。
 
 The default configuration file, encompassing identity information, service ports, P2P network, service launch types, etc., is as follows：
 
@@ -129,8 +119,8 @@ The default configuration file, encompassing identity information, service ports
 node_ws_url = "ws://127.0.0.1:9944"
 # local node_call server port.
 node_call_port = 8720
-# device_owner is a wallet address
-device_owner = "0x0000000000000000000000000000000000000000"
+# the owner address of device （ETH type format）
+device_owner = "0x00000000000000000000000000000000000000"
 # database path
 db_path = "/host/data"
 # tokio console port
@@ -145,23 +135,26 @@ atomic_flush = true
 port = 38700
 boot_nodes =["/ip4/172.210.130.200/tcp/38701/p2p/12D3KooWJVjkr19spLuvmWb68zdxki2qucnubPzbHRjxRi8jhwzF","/ip4/20.81.161.179/tcp/38701/p2p/12D3KooWMDqap7HMjA6nos1HpHpWt8JBcPepnZgYSd5PPmovAqD7"]
 share_peer_interval = 30
+
 only_global_ips = true
 protocol_id = "betatestnet"
 
 [key_server_config]
+version = 1
 attestation_style = 2 #This corresponds to using an image, epid=1, dcap=2
-seal_policy = "MRSIGNER"
+seal_policy = "MRENCLAVE"
 exe_policy = { Multiply = { executors = 8 } }
-round_time_limit = 60
-clear_msg_interval = 180
+round_time_limit = 180
+clear_msg_interval = 360
 ```
 
 Parameter Descriptions:
+
 - **`node_ws_url`**: The accessible endpoint of the node service. If using a local port, it might be `ws://127.0.0.1:9944`.
 
 - **`node_call_port`**: The port number through which the keyring service is exposed to the outside world.
 
-- **`identity`**: The holder of the keyring service, a crucial factor affecting income and penalties for providing services.
+- **`identity`**: The owner of the keyring service, a crucial factor affecting income and penalties for providing services.
 
 - **`db_path`**: The storage path for the keyring service to persist data. It is not recommended to modify this. If you need to change it, please refer to the [occlum file system](https://occlum.readthedocs.io/en/latest/filesystem/fs_overview.html).
 
@@ -169,7 +162,15 @@ Parameter Descriptions:
 
 - **`db_option.atomic_flush`**: Runtime parameters for the RocksDB database exposed by the keyring service.
 
+- **`network_config.protocol_id`**: The division of P2P network protocols is particularly important. Different networks have different `protocol_id`. Please follow the official configuration, otherwise the link will be invalid.
+
 - **`network_config.port`**: The local port number for the keyring service's P2P.
+
+- **`network_config.is_mdns`**: MDNS discovery enabled.
+
+- **`network_config.is_autonat`**: Autonat discovery enabled.
+  
+- **`network_config.max_peers_connected`**: Maximum number of nodes allowed to be connected.
 
 - **`network_config.boot_nodes`**: Information for the keyring service's P2P module to connect to other services. If configured incorrectly, it will become an isolated node and cannot participate in the service.
 
@@ -207,14 +208,21 @@ Note: `/root/occlum_instance/data`  is an internal directory within Occlum and d
 
 Before starting, we should check if `docker compose` is installed on the system. You can check this by running `docker compose --version ` or `docker-compose --version`. If it's not installed, you'll need to install it.
 
+```shell
+# install docker-compose
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+docker-compose --version
+```
+
 To start and view logs, use the following commands:
 
 ```shell
-docker compose up -d
-docker compose logs -f 
+docker-compose up -d
+docker-compose logs -f 
 ```
 
-Wait for the software to initiate. In case of any errors, consult the [FAQ](#FAQ).
+Wait for the software to run. In case of any errors, consult the [FAQ](#FAQ).
 
 If the software is running correctly, you will observe logs similar to the following in the terminal:
 
@@ -222,59 +230,42 @@ If the software is running correctly, you will observe logs similar to the follo
 register sgx: "0x13bec2ac21b038d885d49d8100d307ce7761cf890bbdf25962a0eb2f2ac18101"
 ```
 
-In the [Apps Management Tool](https://apps.bool.network/?rpc=wss%3A%2F%2Fdev-rpc-node-ws.bool.network#/explorer) you can observe:
-![apps-device-register](./images/apps-device-register.jpg)
+Login your `device_owner` account to [Boolscan's DHC device](https://dhc.boolscan.com/beta_testnet), unlisted devices will initially appear in the device list:
 
-Upon linking your `Identity` account to [Boolscan's device](https://dashboard.boolscan.com/device?network=devnet), unlisted devices will initially appear in the device list:
+![boolscan-device-unlist](./images/boolscan-device-unlist.png)
 
-![boolscan-unlisted](./images/boolscan-unlisted.jpg)
+**All subsequent actions will require Metamask signature. Please verify that the connected account in Metamask matches the `device_owner` account in your `keyring.toml` file to ensure consistency.**
 
-**All subsequent actions will require Metamask signature. Please verify that the connected account in Metamask matches the `identity` account in your `keyring.toml` file to ensure consistency.**
+#### Update Device
 
-#### Creating Provider
+Go to the [Boolscan's DHC device](https://dhc.boolscan.com/beta_testnet) to activate the device. You need to vote tokens for the first time.
 
-On the [Boolscan's provider](https://dashboard.boolscan.com/?network=devnet) to create a provider instance for staking an amount not less than 1 tBol.
+![boolscan-launch-device](./images/boolscan-launch-device.png)
 
-![boolscan-create-provider](./images/boolscan-create-provider.jpg)
+For quick start, we need to stake 2000tBol at a time, and then click the `Submit` button.
 
-Tip: A provider can be associated with multiple devices, but each device can only be bound to one PID.
+![boolscan-launch-submit](./images/boolscan-launch-submit.png)
 
-#### Binding PID
+Wait for a epoch, and after the total stake amount reaches the condition (2000tBol), participate in the service through the 'Join Service'.
 
-After creating the provider, return to the [Boolscan's device](https://dashboard.boolscan.com/device?network=devnet) to bind the unlisted devices to the provider for device activation.
-
-![boolscan-bind-pid](./images/boolscan-bind-pid.jpg)
-
-#### Joining the Service 
-
-Once the binding is complete, wait for the service to synchronize data, and the device will change to a `Stop` state.
-
-Subsequently, you can execute the `Stark Work` and `Join Service` commands one by one to involve the device in the service.
-
-![boolscan-join-server](images/boolscan-join-server.jpg)
+![boolscan-join-service](./images/boolscan-join-service.png)
 
 When you see the device status change to `Service`, **congratulations** - the process is complete.
 
-Check if the software is running correctly, indicated by the following logs:
+![boolscan-join-success](./images/boolscan-join-success.png)
 
-```text
-HeartBeat session: 40167, challenge: [124, 148, 169, 145, 235, 214, 178, 134, 90, 10, 228, 25, 131, 65, 254, 0, 98, 93, 83, 204, 48, 182, 48, 209, 19, 158, 45, 233, 49, 254, 25, 129], hash: "0xa746ff7daae0952967cc9eadb38e6627052cd073cf0a319cb8fcb65e0abdabef"
-
-send enter err cid-epoch-fork: 303-8096-0
-send enter err cid-epoch-fork: 307-6968-1
-```
+> Check if the software is running correctly, indicated by the following logs: 
+> HeartBeat session: 40167, challenge: [124, 148, 169, 145, 235, 214, 178, 134, 90, 10, 228, 25, 131, 65, 254, 0, 98, 93, 83, 204, 48, 182, 48, 209, 19, 158, 45, 233, 49, 254, 25, 129], hash: "0xa746ff7daae0952967cc9eadb38e6627052cd073cf0a319cb8fcb65e0abdabef"
 
 #### Exiting the Service (if required)
 
 Note: The system penalizes malicious nodes by deducting their staked tokens. To avoid financial losses due to irregular exits, please follow the process below to exit.
 
-![boolscan-exit-server](./images/boolscan-exit-server.jpg)
+Exit the service by executing `Exit Service`:
 
-Exit the service by executing `Exit Service` and `Stop Work` in sequence:
+![boolscan-exit-service](./images/boolscan-exit-service.png)
 
-1. After executing `Exit Service`, you need to wait for a epoch before you can execute `Stop Work`. You can't perform any operations during this period.
-   
-2. After executing `Stop Work`, the device's status will be `Stop`. Only then can you stop the keyring service; otherwise, there may be penalties.
+After executing `Exit Service`, you need to wait for a epoch before you can execute `Remove Device`. You can't perform any operations during this period.
 
 Finally, stop your keyring service.
 
@@ -286,11 +277,23 @@ docker compose down
 
 <span id="FAQ"> </span>
 
-* If you encounter an error during startup with the message： thread 'main' panicked at 'called `Result::unwrap()` on an `Err` value: "Invalid secret key"'
+**If there is no device registration information on Boolscan or you receive the error message： `register failed for "Rpc error: RPC error: RPC call failed: ErrorObject { code: ServerError(1010), message: \"Invalid Transaction\", data: Some(RawValue(\"Custom error: 28\")) }`**
 
-it means that the `identity` field in `keyring.toml` has an incorrect input format. Please ensure that you have entered the correct account private key.
+It indicates that keyring version number does not match.
 
-* If there is no device registration information on Boolscan or you receive the error message： register failed for "Rpc error: RPC error: RPC call failed: ErrorObject { code: ServerError(1010), message: \"Invalid Transaction\", data: Some(RawValue(\"Inability to pay some fees (e.g. account balance too low)\")) }
+**If you encounter an error during startup with the message: `[get_platform_quote_cert_data ../qe_logic.cpp:388] Error returned from the p_sgx_get_quote_config API. 0xe011.  Or [get_platform_quote_cert_data ../qe_logic.cpp:378] Error returned from the p_sgx_get_quote_config API. 0xe019`**
 
-it indicates that the account under `identity` does not have a sufficient balance. To address this, use the command `curl https://bot.bool.network/coin/tBol/478/<Account ID/Address>`to claim test coins.
+0xe011 means "The platform library doesn't have any platfrom cert data". If you set up the PCCS service by yourself, please follow [intel guide](https://www.intel.com/content/www/us/en/developer/articles/guide/intel-software-guard-extensions-data-center-attestation-primitives-quick-install-guide.html) strictly. If you run in cloud, Use the pccs service provided by the cloud service provider. 
 
+```text
+Azure "pccs_url": "https://global.acccache.azure.net/sgx/certification/v3"
+Ali "pccs_url": "https://sgx-dcap-server.cn-hangzhou.aliyuncs.com/sgx/certification/v3/"
+```
+
+**If you encounter an error during startup with the message: `[ERROR] occlum-pal:     SIGILL Caught ! (line 37, file src/pal_check_fsgsbase.c) [ERROR] occlum-pal: FSGSBASE enablement check failed. (line 89, file src/pal_api.c`**
+
+```
+git clone https://github.com/occlum/enable_rdfsbase.git
+cd enable_rdfsbase 
+make && make install
+```
