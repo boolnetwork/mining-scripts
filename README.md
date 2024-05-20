@@ -135,12 +135,11 @@ atomic_flush = true
 port = 38700
 boot_nodes =["/ip4/172.210.130.200/tcp/38701/p2p/12D3KooWJVjkr19spLuvmWb68zdxki2qucnubPzbHRjxRi8jhwzF","/ip4/20.81.161.179/tcp/38701/p2p/12D3KooWMDqap7HMjA6nos1HpHpWt8JBcPepnZgYSd5PPmovAqD7"]
 share_peer_interval = 30
-
+is_autonat = true
 only_global_ips = true
 protocol_id = "betatestnet"
 
 [key_server_config]
-version = 1
 attestation_style = 2 #This corresponds to using an image, epid=1, dcap=2
 seal_policy = "MRENCLAVE"
 exe_policy = { Multiply = { executors = 8 } }
@@ -179,8 +178,6 @@ Parameter Descriptions:
 - **`network_config.only_global_ips`**: Whether the keyring service's P2P module only manages public IP addresses.
 
 - **`network_config.peer_key`**: Specifies the keyring service's P2P identity information. If not filled, it will be generated randomly.
-
-- **`key_server_config.version`**: The version number necessary for keyring service registration is a collaborative effort between BOOLNetwork official and the community. It increments as the functionality of the keyring software is enhanced or altered. Users should refrain from making arbitrary changes, as it may lead to software malfunctions. The exact software version number and registration version can be obtained from official information.
 
 - **`key_server_config.attestation_style`**: The mode of SGX remote attestation for the keyring service, where `1` represents `EPID` and `2` represents `DCAP`.
 
