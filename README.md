@@ -126,11 +126,11 @@ Open the `keyring.toml` file under the `configs` directory and replace `0x000000
 The default configuration file, encompassing identity information, service ports, P2P network, service launch types, etc., is as follows：
 
 ```toml
-node_ws_url = "ws://172.210.130.200:9944"
+node_ws_url = "ws://127.0.0.1:9944"
 # local node_call server port.
 node_call_port = 8720
-# used to generate LocalKeyStore, used to get AccountId in substrate.
-identity = "0x0000000000000000000000000000000000000000000000000000000000000000"
+# device_owner is a wallet address
+device_owner = "0x0000000000000000000000000000000000000000"
 # database path
 db_path = "/host/data"
 # tokio console port
@@ -143,12 +143,12 @@ atomic_flush = true
 
 [network_config]
 port = 38700
-boot_nodes = ["/ip4/172.210.130.200/tcp/38700/p2p/12D3KooWJVjkr19spLuvmWb68zdxki2qucnubPzbHRjxRi8jhwzF"]
+boot_nodes =["/ip4/172.210.130.200/tcp/38701/p2p/12D3KooWJVjkr19spLuvmWb68zdxki2qucnubPzbHRjxRi8jhwzF","/ip4/20.81.161.179/tcp/38701/p2p/12D3KooWMDqap7HMjA6nos1HpHpWt8JBcPepnZgYSd5PPmovAqD7"]
 share_peer_interval = 30
 only_global_ips = true
+protocol_id = "betatestnet"
 
 [key_server_config]
-version = 1
 attestation_style = 2 #This corresponds to using an image, epid=1, dcap=2
 seal_policy = "MRSIGNER"
 exe_policy = { Multiply = { executors = 8 } }
