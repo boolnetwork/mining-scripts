@@ -132,12 +132,16 @@ create_if_missing = true
 atomic_flush = true
 
 [network_config]
+protocol_id = "betatestnet"
 port = 38700
 boot_nodes =["/ip4/172.210.130.200/tcp/38701/p2p/12D3KooWJVjkr19spLuvmWb68zdxki2qucnubPzbHRjxRi8jhwzF","/ip4/20.81.161.179/tcp/38701/p2p/12D3KooWMDqap7HMjA6nos1HpHpWt8JBcPepnZgYSd5PPmovAqD7"]
 share_peer_interval = 30
+is_mdns = true
 is_autonat = true
 only_global_ips = true
-protocol_id = "betatestnet"
+#max_peers_connected = 50
+#peer_key = "0x0000000000000000000000000000000000000000000000000000000000011111"
+#external_multiaddrs = ["/ip4/127.0.0.1/tcp/38700"]
 
 [key_server_config]
 attestation_style = 2 #This corresponds to using an image, epid=1, dcap=2
