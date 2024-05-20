@@ -19,6 +19,7 @@ port = 38700
 boot_nodes = ["/ip4/172.210.130.200/tcp/38700/p2p/12D3KooWJVjkr19spLuvmWb68zdxki2qucnubPzbHRjxRi8jhwzF"]
 share_peer_interval = 30
 protocol_id = "betatestnet"
+is_autonet = true
 # External address that other nodes will use to connect to this node. optional
 #external_multiaddrs = ["/ip4/127.0.0.1/tcp/38700"]
 
