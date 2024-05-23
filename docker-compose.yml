@@ -2,7 +2,7 @@ version: "3"
 services:
   bnk-occlum-keyring:
     # Before changing version numbers, make sure your device is in Standby status, or not registered. Otherwise you will be punished.
-    image: boolnetwork/bnk-occlum-keyring-dcap:v0.11.0
+    image: boolnetwork/bnk-occlum-keyring-dcap:v0.11.3
     restart: always
     network_mode: "host"
     environment:
