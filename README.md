@@ -243,11 +243,11 @@ Go to the [Boolscan's DHC device](https://dhc.boolscan.com/beta_testnet) to acti
 
 ![boolscan-launch-device](./images/boolscan-launch-device.png)
 
-For quick start, we need to stake 2000tBol at a time, and then click the `Submit` button.
+For quick start, we need to stake 20000tBol at a time, and then click the `Submit` button.
 
 ![boolscan-launch-submit](./images/boolscan-launch-submit.png)
 
-Wait for a epoch, and after the total stake amount reaches the condition (2000tBol), participate in the service through the 'Join Service'.
+Wait for a epoch, and after the total stake amount reaches the condition (20000tBol), participate in the service through the 'Join Service'.
 
 ![boolscan-join-service](./images/boolscan-join-service.png)
 
