@@ -23,6 +23,5 @@ boot_nodes =["/ip4/172.210.130.200/tcp/38701/p2p/12D3KooWQBrkBWb3tLoUpxqXebxg1Ea
 share_peer_interval = 30
 only_global_ips = true
 protocol_id = "betatestnet"
-is_autonat = true
 # External address that other nodes will use to connect to this node. optional
 #external_multiaddrs = ["/ip4/127.0.0.1/tcp/38700"]
