@@ -1,6 +1,4 @@
 node_ws_url = "ws://127.0.0.1:9944"
-# local node_call server port.
-node_call_port = 8720
 # the owner address of device （ETH type format）
 device_owner = "0x0000000000000000000000000000000000000000"
 # database path
