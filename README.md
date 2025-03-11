@@ -131,6 +131,10 @@ console_port = 5555
 create_if_missing = true
 atomic_flush = true
 
+[prime_factory_config]
+threads = 5
+target = 500
+
 [network_config]
 protocol_id = "betatestnet"
 port = 38700
@@ -164,6 +168,9 @@ Parameter Descriptions:
 - **`db_option.create_if_missing`**: Runtime parameters for the RocksDB database exposed by the keyring service.
 
 - **`db_option.atomic_flush`**: Runtime parameters for the RocksDB database exposed by the keyring service.
+  
+- **`prime_factory_config.threads`**: The number of threads that will be occupied when a new version is launched, with each version being initialized and called once, will occupy CPU for a period of time. In order to avoid occupying all CPU, adjustments can be made as appropriate (by default, all threads are occupied).
+- **`prime_factory_config.target`**: The target number for generating safe prime numbers should be slightly larger during actual running, preferably between 100 and 1000. The larger the number, the longer the initialization time (default value is 500).
 
 - **`network_config.protocol_id`**: The division of P2P network protocols is particularly important. Different networks have different `protocol_id`. Please follow the official configuration, otherwise the link will be invalid.
 
